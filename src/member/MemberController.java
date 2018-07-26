@@ -46,7 +46,7 @@ public class MemberController extends HttpServlet {
 			dto.setName(name);
 			dto.setEmail(email);
 			dto.setHp(hp);
-//			dao.insertSha256(dto);
+			dao.insertSha256(dto);
 		}else if(url.indexOf("join_bcrypt.do")!=-1){
 			String userid=request.getParameter("userid");
 			String passwd=request.getParameter("passwd");
@@ -59,7 +59,7 @@ public class MemberController extends HttpServlet {
 			dto.setName(name);
 			dto.setEmail(email);
 			dto.setHp(hp);
-//			dao.insertBcrypt(dto); 
+			dao.insertBcrypt(dto); 
 		}else if(url.indexOf("join.do") != -1){
 			String userid=request.getParameter("userid");
 			String passwd=request.getParameter("passwd");
@@ -85,7 +85,7 @@ public class MemberController extends HttpServlet {
 			dto.setName(name);
 			dto.setEmail(email);
 			dto.setHp(hp);
-//			dao.insertCrypt(dto);
+			dao.insertCrypt(dto);
 		}else if(url.indexOf("view.do")!=-1){
 			String userid=request.getParameter("userid");
 			//System.out.println("클릭한 아이디:"+userid);
@@ -124,9 +124,9 @@ public class MemberController extends HttpServlet {
 			MemberDTO dto=new MemberDTO();
 			dto.setUserid(userid);
 			dto.setPasswd(passwd);
-//			String result=dao.loginCheckOracle(dto);
-//			System.out.println(result);
-//			request.setAttribute("result", result);
+			String result=dao.loginCheckOracle(dto);
+			System.out.println(result);
+			request.setAttribute("result", result);
 			String page="/ch06/login_result.jsp";
 			RequestDispatcher rd
 				=request.getRequestDispatcher(page);
@@ -139,9 +139,9 @@ public class MemberController extends HttpServlet {
 			MemberDTO dto=new MemberDTO();
 			dto.setUserid(userid);
 			dto.setPasswd(passwd);
-//			String result=dao.loginCheckSha256(dto);
-//			System.out.println(result);
-//			request.setAttribute("result", result);
+			String result=dao.loginCheckSha256(dto);
+			System.out.println(result);
+			request.setAttribute("result", result);
 			String page="/ch06/login_result.jsp";
 			RequestDispatcher rd
 				=request.getRequestDispatcher(page);
@@ -154,9 +154,9 @@ public class MemberController extends HttpServlet {
 			MemberDTO dto=new MemberDTO();
 			dto.setUserid(userid);
 			dto.setPasswd(passwd);
-//			String result=dao.loginCheckBcrypt(dto);
-//			System.out.println(result);
-//			request.setAttribute("result", result);
+			String result=dao.loginCheckBcrypt(dto);
+			System.out.println(result);
+			request.setAttribute("result", result);
 			String page="/ch06/login_result.jsp";
 			RequestDispatcher rd
 				=request.getRequestDispatcher(page);
@@ -169,9 +169,9 @@ public class MemberController extends HttpServlet {
 			MemberDTO dto=new MemberDTO();
 			dto.setUserid(userid);
 			dto.setPasswd(passwd);
-//			String result=dao.loginCheck(dto);
-//			System.out.println(result);
-//			request.setAttribute("result", result);
+			String result=dao.loginCheck(dto);
+			System.out.println(result);
+			request.setAttribute("result", result);
 			String page="/ch06/login_result.jsp";
 			RequestDispatcher rd
 				=request.getRequestDispatcher(page);
