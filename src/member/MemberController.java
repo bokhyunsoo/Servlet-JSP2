@@ -31,7 +31,7 @@ public class MemberController extends HttpServlet {
 			//member_list.jsp에서 참조할 수 있도록 자료 저장
 			request.setAttribute("map", map);
 			//String page="/ch06/member_list.jsp";
-			String page="/ch06/member_list.jsp";
+			String page="/ch06/member_list2.jsp";
 			RequestDispatcher rd=request.getRequestDispatcher(page);
 			rd.forward(request, response); //포워딩
 		}else if(url.indexOf("join_sha.do") != -1){
