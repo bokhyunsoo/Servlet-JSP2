@@ -5,6 +5,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- namespace : sql 명령어들의 집합 --> 
 <mapper namespace="memo">
+	<!-- parameterType 입력매개변수의 자료형(생략가능)
+	resultType 리턴타입의 자료형(레코드의 자료형), 필수 -->
 	<select id="listAll" resultType="memo.dto.MemoDTO">
 		select idx, writer, memo, to_char(post_date,'yyyy-mm-dd hh24:mi:ss') post_date from memo
 		where writer like '%' || #{search} || '%' or memo like '%' || #{search} || '%'
@@ -15,10 +17,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where ${searchkey} like '%' || #{search} || '%'
 		order by idx desc
 	</select>
+	<select id="view" parameterType="int" resultType="memo.dto.MemoDTO">
+		select * from memo where idx=#{idx}
+	</select>
 	<insert id="insert" parameterType="memo.dto.MemoDTO">
 		insert into memo (idx,writer,memo) values
 		( (select nvl(max(idx)+1,1) from memo), #{writer}, #{memo} )
 	</insert>
+	<update id="update" parameterType="memo.dto.MemoDTO">
+		update memo set writer=#{writer}, memo=#{memo}
+		where idx=#{idx}
+	</update>
+	<delete id="delete" parameterType="int">
+		delete from memo where idx=#{idx}
+	</delete>
 </mapper>
 
 

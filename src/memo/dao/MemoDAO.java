@@ -11,6 +11,31 @@ import sqlmap.MybatisManager;
 
 public class MemoDAO {
 	
+	public void deleteMemo(int idx){
+		SqlSession session
+			=MybatisManager.getInstance().openSession();
+		session.delete("memo.delete", idx);
+		session.commit();
+		session.close();
+	}
+	
+	public void updateMemo(MemoDTO dto){
+		//mybatis의 객체(Connection+Statement)
+		SqlSession session
+			=MybatisManager.getInstance().openSession();
+		session.update("memo.update", dto);
+		session.commit();
+		session.close();
+	}
+	
+	public MemoDTO viewMemo(int idx){
+		SqlSession session
+			=MybatisManager.getInstance().openSession();
+		MemoDTO dto=session.selectOne("memo.view", idx);
+		session.close();
+		return dto;
+	}
+	
 	public void insertMemo(MemoDTO dto){
 		//mybatis 실행 객체 생성
 		SqlSession session
