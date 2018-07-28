@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?> <!-- xml 지시어 -->
+<!-- 현재 xml 문서의 dtd(문서 타입)을 선언 -->
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace : sql 명령어들의 집합 --> 
+<mapper namespace="memo">
+	<select id="listAll" resultType="memo.dto.MemoDTO">
+		select idx, writer, memo, to_char(post_date,'yyyy-mm-dd hh24:mi:ss') post_date from memo
+		where writer like '%' || #{search} || '%' or memo like '%' || #{search} || '%'
+		order by idx desc
+	</select>
+	<select id="list" resultType="memo.dto.MemoDTO">
+		select idx, writer, memo, to_char(post_date,'yyyy-mm-dd hh24:mi:ss') post_date from memo
+		where ${searchkey} like '%' || #{search} || '%'
+		order by idx desc
+	</select>
+	<insert id="insert" parameterType="memo.dto.MemoDTO">
+		insert into memo (idx,writer,memo) values
+		( (select nvl(max(idx)+1,1) from memo), #{writer}, #{memo} )
+	</insert>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
