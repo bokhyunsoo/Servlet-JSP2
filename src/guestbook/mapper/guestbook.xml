@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?> <!-- xml 지시어 -->
+<!-- 현재 xml 문서의 dtd(문서 타입)을 선언 -->
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace : sql 명령어들의 집합 --> 
+<mapper namespace="guestbook">
+	<!-- parameterType 입력매개변수의 자료형(생략가능)
+	resultType 리턴타입의 자료형(레코드의 자료형), 필수 -->
+	<delete id="gbDelete">
+		delete from guestbook where idx=#{idx}
+	</delete>
+	<update id="gbUpdate">
+		update guestbook set name=#{name}, email=#{email}, passwd=#{passwd},
+		content=#{content} where idx=#{idx}
+	</update>
+	<select id="gbDetail" resultType="guestbook.dto.GuestBookDTO">
+		select * from guestbook where idx=#{idx}
+	</select>
+	<select id="passwdCheck" resultType="int">
+		select count(*) from guestbook where idx=#{idx} and passwd=#{passwd}
+	</select>
+	<select id="gbList" resultType="guestbook.dto.GuestBookDTO">
+		select idx, name, email, content, post_date from guestbook
+		where ${searchkey} like #{search}
+		order by idx desc
+	</select>
+	<select id="gbListAll" resultType="guestbook.dto.GuestBookDTO">
+		select idx, name, email, content, post_date
+		from guestbook
+		where name like #{search} or content like #{search}
+		order by idx desc
+	</select>
+	<insert id="gbInsert">
+		insert into guestbook (idx, name, email, passwd, content) values
+		(guestbook_seq.nextval, #{name}, #{email}, #{passwd}, #{content})
+	</insert>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
