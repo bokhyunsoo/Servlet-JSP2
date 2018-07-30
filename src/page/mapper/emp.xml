@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?> <!-- xml 지시어 -->
+<!-- 현재 xml 문서의 dtd(문서 타입)을 선언 -->
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace : sql 명령어들의 집합 --> 
+<mapper namespace="emp">
+
+	<select id="empCount" resultType="int">
+		select count(*) from test
+	</select>
+
+	<select id="empList" resultType="e">
+    select *
+		from(
+    		select A.*, rownum as rn
+    			from (
+        			select empno, ename
+        			from test
+        			order by empno
+    			) A
+			)
+	where rn between #{start} and #{end}
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
