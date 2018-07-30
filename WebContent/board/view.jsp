@@ -10,8 +10,37 @@
 <script>
 $(function(){
 	comment_list();
+	$("#btnSave").click(function(){
+		comment_add();
+	});
+	$("#btnList").click(function(){
+		location.href="${path}/board_servlet/list.do";
+	});
+	$("#btnReply").click(function(){
+		document.form1.action="${path}/board_servlet/reply.do";
+		document.form1.submit();
+	});
+	$("#btnEdit").click(function(){
+		document.form1.action
+			="${path}/board_servlet/pass_check.do";
+		document.form1.submit();
+	});
 });
-
+function comment_add(){
+	var param=
+"board_num=${dto.num}&writer="+$("#writer").val()
++"&content="+$("#content").val();
+	$.ajax({
+		type: "post",
+		url: "${path}/board_servlet/comment_add.do",
+		data: param,
+		success: function(){
+			$("#writer").val("");
+			$("#content").val("");
+			comment_list();
+		}
+	});
+}
 function comment_list(){
 	//백그라운드로 서버 호출
 	$.ajax({
@@ -52,6 +81,11 @@ function comment_list(){
 		<td>비밀번호</td>
 		<td colspan="3">
 			<input type="password" name="passwd" id="passwd">
+			<c:if test="${param.message == 'error' }">
+				<span style="color:red;">
+					비밀번호가 일치하지 않습니다.
+				</span>
+			</c:if>
 		</td>
 	</tr>
 	<tr>
@@ -74,6 +108,19 @@ function comment_list(){
 	</tr>
 </table>
 </form>
+<!-- 댓글 쓰기 폼 -->
+<table width="700px">
+	<tr>
+		<td><input id="writer" placeholder="이름"></td>
+		<td rowspan="2">
+			<button id="btnSave" type="button">확인</button>
+		</td>
+	</tr>
+	<tr>
+		<td><textarea rows="5" cols="80"
+placeholder="내용을 입력하세요" id="content"></textarea></td>
+	</tr>
+</table>
 
 <!-- 댓글 목록을 출력할 영역 -->
 <div id="commentList"></div>

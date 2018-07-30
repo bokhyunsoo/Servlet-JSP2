@@ -1,15 +1,96 @@
 package board.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.session.SqlSession;
 
+import board.dto.BoardCommentDTO;
 import board.dto.BoardDTO;
 import sqlmap.MybatisManager;
 
 public class BoardDAO {
+	
+	//비밀번호 체크
+	public String passwdCheck(int num, String passwd){
+		String result=null;
+		SqlSession session=null;
+		try {
+			session=MybatisManager.getInstance().openSession();
+			Map<String,Object> map=new HashMap<>();
+			map.put("num", num);
+			map.put("passwd", passwd);
+			result=session.selectOne("board.pass_check", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(session!=null) session.close();
+		}
+		return result;
+	}
+	
+	//답글 쓰기
+	public void reply(BoardDTO dto){
+		SqlSession session=null;
+		try {
+			session = MybatisManager.getInstance().openSession();
+			session.insert("board.reply", dto);
+			session.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(session != null) session.close();
+		}
+	}
+	
+	//답글의 순서 조정
+	public void updateStep(int ref, int re_step){
+		SqlSession session=null;
+		try {
+			session=MybatisManager.getInstance().openSession();
+			BoardDTO dto=new BoardDTO();
+			dto.setRef(ref);
+			dto.setRe_step(re_step);
+			session.update("board.updateStep", dto);
+			session.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(session!=null) session.close();
+		}
+	}
+	
+	//댓글 추가
+	public void commentAdd(BoardCommentDTO dto){
+		SqlSession session=null;
+		try {
+			session=MybatisManager.getInstance().openSession();
+			session.insert("board.commentAdd", dto);
+			session.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(session!=null) session.close();
+		}
+	}
+	
+	//댓글 목록을 구하는 코드
+	public List<BoardCommentDTO> commentList(int num){
+		List<BoardCommentDTO> list=null;
+		SqlSession session=null;
+		try {
+			session = MybatisManager.getInstance().openSession();
+			list=session.selectList("board.commentList", num);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(session!=null) session.close();
+		}
+		return list;
+	}
 	
 	//조회수 증가 처리
 	public void plusReadCount(int num,HttpSession count_session){
