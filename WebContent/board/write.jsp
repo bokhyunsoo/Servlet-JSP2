@@ -18,7 +18,8 @@ $(function(){
 <body>
 <h2>글쓰기</h2>
 <form name="form1" method="post" 
-	action="${path}/board_servlet/insert.do">
+	action="${path}/board_servlet/insert.do"
+	enctype="multipart/form-data">
 <table border="1" width="700px">
 	<tr>
 		<td>이름</td>

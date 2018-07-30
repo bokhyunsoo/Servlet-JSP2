@@ -33,10 +33,17 @@ $(function(){
 			<tr>
 				<td>${dto.num}</td>
 				<td>${dto.writer}</td>
-				<td>${dto.subject}</td>
+				<td><a href="${path}/board_servlet/view.do?num=${dto.num}">
+				${dto.subject}</a></td>
 				<td>${dto.reg_date}</td>
 				<td>${dto.readcount}</td>
-				<td>${dto.filename}</td>
+				<td align="center">
+					<c:if test="${dto.filesize > 0}">
+					<a href="${path}/board_servlet/download.do?num=${dto.num}">
+							<img src="../images/file.gif">
+					</a>
+					</c:if>
+				</td>
 				<td>${dto.down}</td>
 			</tr>
 </c:forEach>
