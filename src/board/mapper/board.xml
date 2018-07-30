@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+	<!-- 게시물 목록 -->
+	<!-- resultType : 필수 -->
+	<select id="list" resultType="board.dto.BoardDTO">
+		select num, writer, subject, reg_date, readcount, filename, filesize, down, ref, re_step, re_level
+		from board
+		order by num desc
+	</select>
+	
+	<!-- 게시물 저장 -->
+	<insert id="insert">
+		insert into board
+    (num, writer, subject, passwd, ref, re_step, re_level, content, ip, filename, filesize)
+values
+    ( (select nvl(max(num)+1,1) from board), #{writer}, #{subject}, #{passwd}, (select nvl(max(num)+1,1) from board), 1, 0, #{content}, #{ip}, #{filename} ,#{filesize} )
+	</insert>
+</mapper>

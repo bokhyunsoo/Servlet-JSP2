@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
   <display-name>jsp01</display-name>
-  <!-- 세션 유효시간 설정(분 단위), 기본값 30분 -->
   <session-config>
-  	<session-timeout>15</session-timeout>
+    <session-timeout>15</session-timeout>
   </session-config>
   <servlet>
-    <servlet-name>forward</servlet-name>
-    <servlet-class>ch03.ForwardController</servlet-class>
+    <servlet-name>board</servlet-name>
+    <servlet-class>board.BoardController</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>forward</servlet-name>
-    <url-pattern>/ch03_servlet/forward.do</url-pattern>
+    <servlet-name>board</servlet-name>
+    <url-pattern>/board_servlet/*</url-pattern>
   </servlet-mapping>
   <error-page>
     <error-code>404</error-code>
@@ -22,6 +21,6 @@
     <location>/error/500code.jsp</location>
   </error-page>
   <welcome-file-list>
-    <welcome-file>main.jsp</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
 </web-app>
