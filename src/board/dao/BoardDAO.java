@@ -14,6 +14,77 @@ import sqlmap.MybatisManager;
 
 public class BoardDAO {
 	
+	public int count(){
+		int result=0;
+		//try~with문 (java1.7부터 사용 가능)
+		try(SqlSession session
+				=MybatisManager.getInstance().openSession()) {
+			result = session.selectOne("board.count");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public int count2(String search_option, String keyword){
+		int result=0;
+		//try~with문 (java1.7부터 사용 가능)
+		try(SqlSession session
+				=MybatisManager.getInstance().openSession()) {
+			Map<String,String> map = new HashMap<>();
+			map.put("search_option", search_option);
+			map.put("keyword", "%"+keyword+"%");
+			result = session.selectOne("board.count2",map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public List<BoardDTO> searchList(
+				String search_option,String keyword,int start, int end){
+		List<BoardDTO> list=null;
+		try( SqlSession session
+				=MybatisManager.getInstance().openSession() ) {
+			Map<String,Object> map = new HashMap<>();
+			map.put("search_option", search_option);
+			map.put("keyword", "%"+keyword+"%");
+			map.put("start", start);
+			map.put("end", end);
+			list=session.selectList("board.searchList", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		return list;
+	}
+	
+	public void delete(int num){
+		SqlSession session=null;
+		try {
+			session=MybatisManager.getInstance().openSession();
+			session.update("board.delete", num);
+			session.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(session!=null) session.close();
+		}
+	}
+	
+	public void update(BoardDTO dto){
+		SqlSession session=null;
+		try {
+			session = MybatisManager.getInstance().openSession();
+			//네임스페이스.태그의id
+			session.update("board.update", dto);
+			session.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(session != null) session.close();
+		}
+	}
+	
 	//비밀번호 체크
 	public String passwdCheck(int num, String passwd){
 		String result=null;
@@ -118,6 +189,24 @@ count_session.getAttribute("read_time_"+num)!=null){
 		}
 	}
 	
+	public BoardDTO viewReplace(int num){
+		BoardDTO dto=null;
+		SqlSession session=null;
+		try {
+			session=MybatisManager.getInstance().openSession();
+			dto=session.selectOne("board.view", num);
+			//줄바꿈 처리
+			String content=dto.getContent();
+			content=content.replace("\n","<br>");
+			dto.setContent(content); 
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if( session!= null ) session.close();
+		}
+		return dto;		
+	}
+	
 	public BoardDTO view(int num){
 		BoardDTO dto=null;
 		SqlSession session=null;
@@ -178,13 +267,16 @@ count_session.getAttribute("read_time_"+num)!=null){
 	}
 	
 	//게시물 목록 리턴
-	public List<BoardDTO> list(){
+	public List<BoardDTO> list(int start, int end){
 		List<BoardDTO> list=null;
 		SqlSession session=null;
 		try {
 			session=MybatisManager.getInstance().openSession();
 			//네임스페이스.태그의id
-			list=session.selectList("board.list");
+			Map<String,Object> map = new HashMap<>();
+			map.put("start", start);
+			map.put("end", end);
+			list=session.selectList("board.list", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

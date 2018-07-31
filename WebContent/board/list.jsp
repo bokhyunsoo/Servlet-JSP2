@@ -13,10 +13,27 @@ $(function(){
 		location.href="${path}/board/write.jsp";
 	});
 });
+//클릭한 페이지로 이동
+function list(page){
+	location.href
+		="${path}/board_servlet/list.do?curPage="+page;
+}
 </script>
 </head>
 <body>
 <h2>게시판</h2>
+
+<form name="form1" method="post" 
+	action="${path}/board_servlet/search.do">
+<select name="search_option">
+	<option value="writer">이름</option>
+	<option value="subject">제목</option>
+	<option value="content">내용</option>
+	<option value="all">이름+제목+내용</option>
+</select>
+<input name="keyword">
+<button id="btnSearch">검색</button>
+</form>
 
 <button id="btnWrite">글쓰기</button>
 <table border="1" width="900px">
@@ -30,6 +47,8 @@ $(function(){
 		<th>다운로드</th>		
 	</tr>
 <c:forEach var="dto" items="${list}">
+		<c:choose>
+			<c:when test="${dto.show == 'y' }">
 			<tr>
 				<td>${dto.num}</td>
 				<td>${dto.writer}</td>
@@ -56,7 +75,48 @@ $(function(){
 				</td>
 				<td>${dto.down}</td>
 			</tr>
+			</c:when>
+			<c:otherwise>
+			<tr>
+				<td>${dto.num}</td>
+				<td colspan="6" align="center">
+				삭제된 게시물입니다.
+				</td>
+			</tr>
+			</c:otherwise>
+		</c:choose>
 </c:forEach>
+	<!-- 페이지 네비게이션 출력 -->	
+	<tr>
+		<td colspan="7" align="center">
+			<c:if test="${page.curBlock > 1}">
+				<a href="#" onclick="list('1')">[처음]</a>
+			</c:if>
+			<c:if test="${page.curBlock > 1}">
+				<a href="#" 
+					onclick="list('${page.prevPage}')">[이전]</a>
+			</c:if>
+			<c:forEach var="num" begin="${page.blockStart}"
+				end="${page.blockEnd}">
+				<c:choose>
+					<c:when test="${num == page.curPage }">
+						<span style="color:red;">${num}</span>
+					</c:when>
+					<c:otherwise>
+						<a href="#" onclick="list('${num}')">${num}</a>
+					</c:otherwise>
+				</c:choose>
+			</c:forEach>
+			<c:if test="${page.curBlock < page.totBlock}">
+				<a href="#" 
+					onclick="list('${page.nextPage}')">[다음]</a>
+			</c:if>
+			<c:if test="${page.curPage < page.totPage}">
+				<a href="#" 
+					onclick="list('${page.totPage}')">[끝]</a> 
+			</c:if>
+		</td>
+	</tr>
 </table>
 </body>
 </html>

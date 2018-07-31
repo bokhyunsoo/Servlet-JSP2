@@ -4,6 +4,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="board">
 	
+	<select id="count" resultType="int">
+		select count(*) from board
+	</select>
+	
+	<!-- 게시물 삭제 -->
+	<update id="delete">
+		update board set show='n' where num=#{num}
+	</update>
+	
+	<!-- 게시물 수정 -->
+	<update id="update">
+		update board set writer=#{writer}, subject=#{subject},
+		content=#{content}, filename=#{filename}, filesize=#{filesize},
+		down=#{down} where num=#{num}
+	</update>
+	
 	<!-- 비밀번호 체크 -->
 	<select id="pass_check" resultType="String">
 		select passwd from board where num=#{num} and passwd=#{passwd}
@@ -56,9 +72,59 @@ values
 	<!-- 게시물 목록 -->
 	<!-- resultType : 필수 -->
 	<select id="list" resultType="board.dto.BoardDTO">
-		select num, writer, subject, reg_date, readcount, filename, filesize, down, re_level, (select count(*) from board_comment where board_num=num) comment_count
-		from board
+		select *
+		from(
+    		select A.*, rownum as rn
+    		from (
+        		select num, writer, subject, reg_date, readcount, filename, filesize, down, re_level, (select count(*) from board_comment where board_num=num) comment_count, show
+				from board
+				order by ref desc, re_step
+    	) A
+	)
+	where rn between #{start} and #{end}
+	</select>
+	
+	<!-- 검색 리스트 -->
+	<select id="searchList" resultType="board.dto.BoardDTO">
+		select *
+		from(
+    		select A.*, rownum as rn
+    		from (
+        		select num, writer, subject, reg_date, readcount, filename, filesize, down, re_level, (select count(*) from board_comment where board_num=num) comment_count, show
+				from board
+		<choose>
+			<when test="search_option != 'all'">
+				where ${search_option} like #{keyword}
+				and show='y'
+			</when>
+			<otherwise>
+				where ( writer like #{keyword}
+				or subject like #{keyword}
+				or content like #{keyword} )
+				and show='y'
+			</otherwise>
+		</choose>
 		order by ref desc, re_step
+    	) A
+	)
+	where rn between #{start} and #{end}
+	</select>
+	
+	<select id="count2" resultType="int">
+		select count(*)
+		from board
+		<choose>
+			<when test="search_option != 'all'">
+				where ${search_option} like #{keyword}
+				and show='y'
+			</when>
+			<otherwise>
+				where ( writer like #{keyword}
+				or subject like #{keyword}
+				or content like #{keyword} )
+				and show='y'
+			</otherwise>
+		</choose>
 	</select>
 	
 	<!-- 게시물 저장 -->

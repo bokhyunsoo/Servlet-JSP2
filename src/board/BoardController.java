@@ -21,6 +21,7 @@ import board.dao.BoardDAO;
 import board.dto.BoardCommentDTO;
 import board.dto.BoardDTO;
 import common.Constants;
+import page.Pager;
 // @WebServlet 어노테이션은 꼭 지워야 함
 public class BoardController extends HttpServlet {
 	//get 방식 호출
@@ -32,10 +33,24 @@ public class BoardController extends HttpServlet {
 		//dao 인스턴스 생성
 		BoardDAO dao=new BoardDAO();
 		if(url.indexOf("list.do") != -1){
-					
+			
+			//레코드 갯수 계산
+			int count = dao.count();
+			
+			//페이지 나누기를 위한 처리
+			int curPage = 1;
+			
+			if(request.getParameter("curPage") != null){
+				curPage = Integer.parseInt(request.getParameter("curPage"));
+			}
+			Pager pager = new Pager(count, curPage);
+			int start = pager.getPageBegin();
+			int end = pager.getPageEnd();
+			
 			//System.out.println("list.do 호출");
-			List<BoardDTO> list=dao.list();
+			List<BoardDTO> list=dao.list(start,end);
 			request.setAttribute("list", list);
+			request.setAttribute("page", pager);
 			//페이지 네비게이션 출력을 위한 정보 전달
 			String page="/board/list.jsp";
 			RequestDispatcher rd=request.getRequestDispatcher(page);
@@ -140,8 +155,7 @@ public class BoardController extends HttpServlet {
 			HttpSession session=request.getSession();
 			dao.plusReadCount(num,session); 
 			//번호에 해당하는 게시물 리턴
-//			BoardDTO dto=dao.viewReplace(num);
-			BoardDTO dto = dao.view(num);
+			BoardDTO dto=dao.viewReplace(num);
 			//request 영역에 저장
 			request.setAttribute("dto", dto);
 			//화면 전환
@@ -305,10 +319,51 @@ public class BoardController extends HttpServlet {
 				dto.setDown(0); 
 			}
 			//레코드 수정
-//			dao.update(dto);
+			dao.update(dto);
 			//페이지 이동
 			String page="/board_servlet/list.do";
 			response.sendRedirect(contextPath+page);
+		}else if(url.indexOf("delete.do") != -1){
+			MultipartRequest multi=new MultipartRequest(
+					request, Constants.UPLOAD_PATH, 
+					Constants.MAX_UPLOAD
+					, "utf-8", new DefaultFileRenamePolicy() );
+			//삭제할 게시물 번호
+			int num=Integer.parseInt(multi.getParameter("num"));
+			dao.delete(num);
+			//페이지 이동
+			String page="/board_servlet/list.do";
+			response.sendRedirect(contextPath+page);
+		}else if(url.indexOf("search.do") != -1){
+			//검색옵션과 검색 키워드
+			String search_option
+				=request.getParameter("search_option");
+			String keyword=request.getParameter("keyword");
+			
+			//레코드 갯수 계산
+			int count2 = dao.count2(search_option, keyword);
+			
+			//페이지 나누기를 위한 처리
+			int curPage2 = 1;
+			
+			if(request.getParameter("curPage2") != null){
+				curPage2 = Integer.parseInt(request.getParameter("curPage2"));
+			}
+			
+			Pager2 pager2 = new Pager2(count2, curPage2);
+			int start = pager2.getPageBegin();
+			int end = pager2.getPageEnd();
+			
+			List<BoardDTO> list
+				=dao.searchList(search_option, keyword, start, end);
+			request.setAttribute("list", list);
+			request.setAttribute("search_option", search_option);
+			request.setAttribute("keyword", keyword);
+			request.setAttribute("page", pager2);
+			String page="/board/search.jsp";
+			RequestDispatcher rd
+				=request.getRequestDispatcher(page);
+			rd.forward(request, response); 
 		}
 	}
 	//post 방식 호출
